@@ -46,7 +46,10 @@ jobs:
      - name: Run command 
        run: |
          ssh -i ~/.ssh/id_ed25519 ubuntu@3.34.46.197 << 'EOF'
-           pkill -f 'java -jar' || true 
+           pkill -f 'java -jar' || true
+           set -a
+           source ~/app/.env
+           set +a
            nohup java -jar ~/app/BootLastProject-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
          EOF
      # 9090 포트 다시 구동 => docker run
