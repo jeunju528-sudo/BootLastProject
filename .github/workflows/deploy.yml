@@ -1,21 +1,33 @@
-name: Deploy to AWS Server
+name: Deploy With Docker to AWS Server
+# 실행조건
 on:
   push:
     branches:
-      - main #main commit and push = [main,master]
+      - main # main commit and push = [main,master]
 jobs:
-  build:
+  deploy:
+    # GitHub Actions가 제공하는 Ubuntu환경에서 실행
+    # AWS EC2가 아니고 GitHub Actions에서 제공하는 임시로 사용하는 Ubuntu 환경에서 돌아가라고 설정
     runs-on: ubuntu-latest
-    
+
+    # 실행 순서 지정
     steps:
      #코드 체크 
      - name: Checkout:repository
-       uses: actions/checkout@v2
-     #JDK 설정 
+       uses: actions/checkout@v4
+     #JDK 설정 => SpringBoot 프로젝트를 build하기위해 jdk설정
      - name: SetUp JDK 21
        uses: actions/setup-java@v1
        with:
+         distribution: 'temurin' # 가벼운 버전의 jdk를 사용하라고 지정
          java-version: '21'
+     # 환경설정
+     # DB 환경설정
+     - name: DB enviroment setting
+       run: |
+         rm -f .env
+         touch .env
+         echo "DB_URL=${{}}" >> .env
      # Gradlew 권한 부여 
      - name: Set gradlew permission
        run: |
