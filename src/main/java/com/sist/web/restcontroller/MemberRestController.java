@@ -26,51 +26,52 @@ public class MemberRestController {
 	private final JWTAuthenticationProvider provider;
 
 	@RequestMapping("/member/login_ok")
-	public ResponseEntity<?> login(@RequestParam("username") String username,
-			@RequestParam("password") String password) {
-
+	public ResponseEntity<?> login(@RequestParam(value = "username", required = false) String username,
+			@RequestParam(value = "password", required = false) String password) {
 		try {
-			// username, password로 사용자 인증
+			// ID / PW 인증
 			Authentication auth = manager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-			// 사용자 정보 가져오기 SecurityContextHolder 에 저장된 객체는 UserDetails 객체임
+			System.out.println("ID/PW 인증");
+			// 인증된 사용자 정보
 			UserDetails user = (UserDetails) auth.getPrincipal();
-			System.out.println("사용자 정보 : " + user.getUsername());
-			System.out.println("사용자 권한 갯수 : " + user.getAuthorities().size());
-			// 사용자 권한 가져오기
+			// SecurityContext => 사용자 정보 => getPrincipal()
+			System.out.println("인증된 사용자 정보");
+			// 사용자 권한
 			String role = user.getAuthorities().iterator().next().getAuthority();
-			System.out.println("권한 : " + role);
+			System.out.println("사용자 권한:" + role);
 			// JWT 생성
 			String token = provider.createToken(user.getUsername(), role);
-			System.out.println("토큰 : " + token);
-			// 쿠키에 token 저장
+			System.out.println("토큰 :" + token);
+			// JWT Cookie 생성
 			ResponseCookie cookie = ResponseCookie.from("accessToken", token).httpOnly(true).secure(false).path("/")
 					.maxAge(3600).build();
-			System.out.println("쿠키 : " + cookie.getValue());
-			// 로그인 성공여부
+			System.out.println("JWT Cookie:" + cookie);
+			// 로그인 성공 여부
 			return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.SET_COOKIE, cookie.toString())
 					.header(HttpHeaders.LOCATION, "/").build();
+			// => 로그인 실패 처리
+		} catch (BadCredentialsException ex) {
+			// 로그인 실패 => ID / PW
+			return ResponseEntity.status(HttpStatus.FOUND)
 
-		} catch (BadCredentialsException e) { // 로그인 실패
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.header(HttpHeaders.LOCATION, "/member/login?error=true").build();
-		} catch (AuthenticationException e) { // 인증 실패
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.header(HttpHeaders.LOCATION, "/member/login?error=true").build();
-		} catch (Exception e) { // 서버오류
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.header(HttpHeaders.LOCATION, "/member/login?error=true").build();
+		} catch (AuthenticationException ex) {
+			return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/member/login?error=true")
+					.build();
+
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, "/member/login?error=true")
+					.build();
 		}
-
 	}
 
 	@GetMapping("/member/logout")
 	public ResponseEntity<Void> logout() {
-		// Cookie 삭제
+		// cookie 삭제
 		ResponseCookie cookie = ResponseCookie.from("accessToken", "").httpOnly(true).secure(false).path("/").maxAge(0)
 				.build();
-		return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, cookie.toString())
+		return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.SET_COOKIE, cookie.toString())
 				.header(HttpHeaders.LOCATION, "/").build();
-
 	}
 
 }
