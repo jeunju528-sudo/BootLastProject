@@ -1,5 +1,10 @@
 <!DOCTYPE html>
-<html>
+<!-- 
+XML 네임스페이스(xmlns) : HTML/XML 문서 내에서 사용되는 속성이나 태그 이름이 다른 라이브러리와 충돌하지 않도록 구별해 주는 '고유한 이름표' 역할
+xmlns에 sec는 고유 식별용 문자열 꼭 sec로 안적어도 됨, 적힌 url은 실제로 접속하는 url이 아니고 타임리프엔진이 url을 읽고 라이브러리에 있는 연결 대상 라이브러리를 판단하여 매핑하는 key 역할
+ -->
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>

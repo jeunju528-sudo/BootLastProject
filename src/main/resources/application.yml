@@ -13,9 +13,9 @@ spring:
     database: oracle
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.OracleDialect 
+        dialect: org.hibernate.dialect.OracleDialect
         format_sql: true
-        user_sql_comments: true   
+        user_sql_comments: true
   thymeleaf:
     cache: false
     encoding: UTF-8
@@ -25,9 +25,10 @@ spring:
 
 mybatis:
   type-aliases-package: com.sist.web.vo
-  mapper-locations: mybatis/mapper/*.xml
+  #mapper-locations: mybatis/mapper/*.xml
 
 logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
+    com.sist.web.mapper: TRACE
