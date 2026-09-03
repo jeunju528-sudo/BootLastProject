@@ -67,6 +67,7 @@ jobs:
            echo "DB_URL=${{secrets.DB_URL}}" >> ~/app/.env
            echo "DB_USERNAME=${{secrets.DB_USERNAME}}" >> ~/app/.env
            echo "DB_PASSWORD=${{secrets.DB_PASSWORD}}" >> ~/app/.env
+           echo "DOCKER_USERNAME=${{secrets.DOCKER_USERNAME}}" >> ~/app/.env
            chmod 600 ~/app/.env
          EOF
      # docker-compose.yml 파일 ec2에 올리기
@@ -79,7 +80,7 @@ jobs:
        run: |
          ssh ubuntu@13.125.234.82 << 'EOF'
            cd /home/ubuntu/app
-           docker-compose pull
-           docker-compose down
-           docker-compose up -d
+           docker-compose pull # docker hub에서 다운받음
+           docker-compose down # 기존거 down
+           docker-compose up -d # 새로 up
          EOF
