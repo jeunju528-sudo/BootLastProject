@@ -80,7 +80,7 @@ jobs:
        run: |
          ssh ubuntu@13.125.234.82 << 'EOF'
            cd /home/ubuntu/app
-           docker-compose pull # docker hub에서 다운받음
            docker-compose down # 기존거 down
+           docker-compose pull # docker hub에서 다운받음
            docker-compose up -d # 새로 up
          EOF
