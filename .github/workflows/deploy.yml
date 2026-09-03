@@ -62,7 +62,7 @@ jobs:
      # 서버 키 확인
      - name: Add Known_hosts
        run: |
-         ssh-keyscan -H ed25519 13.125.234.82 >> ~/.ssh/known_hosts
+         ssh-keyscan -t ed25519 13.125.234.82 >> ~/.ssh/known_hosts
      # Deploy on Server DockerHub Image using
      - name: DockerHub image using
        run: |
@@ -70,5 +70,5 @@ jobs:
            docker stop last-app || true
            docker rm last-app || true
            docker pull "${{secrets.DOCKER_USERNAME}}"/last-app:latest
-           docker run -d --name last-app -p 9090:9090 "${{secrets.DOCKER_USERNAME}}"/last-app:latest
+           docker run -d --name last-app --env-file ~/.env -p 9090:9090 "${{secrets.DOCKER_USERNAME}}"/last-app:latest
          EOF
