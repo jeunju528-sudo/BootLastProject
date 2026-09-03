@@ -40,14 +40,14 @@ jobs:
      # Docker hub 연결
      - name: Login DockerHub
        run: |
-         echo "${{secrets.DOCKERHUB_PASSWORD}}" | docker login -u "${{secrets.DOCKERHUB_USERNAME}}" --password-stdin
+         echo "${{secrets.DOCKER_PASSWORD}}" | docker login -u "${{secrets.DOCKER_USERNAME}}" --password-stdin
      - name: Build Docker Image
        run: |
-         docker build -t "${{secrets.DOCKERHUB_USERNAME}}"/last-app:latest
+         docker build -t "${{secrets.DOCKER_USERNAME}}"/last-app:latest
      # DockerHub에 올림
      - name: Push Docker Image
        run: |
-         docker push "${{secrets.DOCKERHUB_USERNAME}}"/last-app:latest
+         docker push "${{secrets.DOCKER_USERNAME}}"/last-app:latest
      # AWS 연결 
      - name: Set SSH key Permission
        run: |
@@ -69,6 +69,6 @@ jobs:
          ssh ubuntu@13.125.234.82 << 'EOF'
            docker stop last-app || true
            docker rm last-app || true
-           docker pull "${{secrets.DOCKERHUB_USERNAME}}"/last-app:latest
-           docker run -d --name last-app -p 9090:9090 "${{secrets.DOCKERHUB_USERNAME}}"/last-app:latest
+           docker pull "${{secrets.DOCKER_USERNAME}}"/last-app:latest
+           docker run -d --name last-app -p 9090:9090 "${{secrets.DOCKER_USERNAME}}"/last-app:latest
          EOF
