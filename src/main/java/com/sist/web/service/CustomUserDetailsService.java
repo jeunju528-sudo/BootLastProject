@@ -41,6 +41,9 @@ public class CustomUserDetailsService implements UserDetailsService{
 														.map(auth-> new SimpleGrantedAuthority(auth.getAuthority()))
 														.toList();
 		
+		/*
+		 * 여기서 password 까지 넘겨줘서 login할 때 PasswordEncoder 따로 부르는 부분이 없어도 여기 담긴 패스워드를 보고 passwordEncoder.matcher 실행함
+		 * */
 		return User.builder()
 					.username(member.getUsername())
 					.password(member.getPassword())

@@ -30,6 +30,7 @@ public class MemberRestController {
 			@RequestParam(value = "password", required = false) String password) {
 		try {
 			// ID / PW 인증
+			// 여기서 DaoAuthenticationProvider 이 친구가 불러진다음에 PasswordEncoder.matches() 실행까지 함
 			Authentication auth = manager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 			System.out.println("ID/PW 인증");
 			// 인증된 사용자 정보
