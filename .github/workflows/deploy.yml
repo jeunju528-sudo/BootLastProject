@@ -23,13 +23,7 @@ jobs:
          java-version: '21'
      # 환경설정
      # DB 환경설정
-     - name: DB enviroment setting
-       run: |
-         rm -f .env
-         touch .env
-         echo "DB_URL=${{secrets.DB_URL}}" >> .env
-         echo "DB_USERNAME=${{secrets.DB_USERNAME}}" >> .env
-         echo "DB_PASSWORD=${{secrets.DB_PASSWORD}}" >> .env
+
      # Gradlew 권한 부여 
      - name: Set gradlew permission
        run: |
@@ -62,7 +56,19 @@ jobs:
      # 서버 키 확인
      - name: Add Known_hosts
        run: |
-         ssh-keyscan -t ed25519 13.125.234.82 >> ~/.ssh/known_hosts
+         ssh-keyscan -H 13.125.234.82 >> ~/.ssh/known_hosts
+     # 환경 설정 파일 생성
+     - name: DB environment setting
+       run: |
+         ssh ubuntu@13.125.234.82 << EOF
+           mkdir -p ~/app
+           cd ~/app
+           rm -f .env
+           echo "DB_URL=${{secrets.DB_URL}}" >> ~/app/.env
+           echo "DB_USERNAME=${{secrets.DB_USERNAME}}" >> ~/app/.env
+           echo "DB_PASSWORD=${{secrets.DB_PASSWORD}}" >> ~/app/.env
+           chmod 600 ~/app/.env
+         EOF
      # Deploy on Server DockerHub Image using
      - name: DockerHub image using
        run: |
@@ -70,5 +76,5 @@ jobs:
            docker stop last-app || true
            docker rm last-app || true
            docker pull "${{secrets.DOCKER_USERNAME}}"/last-app:latest
-           docker run -d --name last-app --env-file ~/.env -p 9090:9090 "${{secrets.DOCKER_USERNAME}}"/last-app:latest
+           docker run -d --name last-app --env-file ~/app/env -p 9090:9090 "${{secrets.DOCKER_USERNAME}}"/last-app:latest
          EOF
