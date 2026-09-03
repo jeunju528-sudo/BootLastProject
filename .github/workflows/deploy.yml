@@ -69,12 +69,17 @@ jobs:
            echo "DB_PASSWORD=${{secrets.DB_PASSWORD}}" >> ~/app/.env
            chmod 600 ~/app/.env
          EOF
-     # Deploy on Server DockerHub Image using
+     # docker-compose.yml 파일 ec2에 올리기
+     - name: SCP docker-compose
+       run: |
+         ssh ubuntu@13.125.234.82 "mkdir -p /home/ubuntu/app"
+         scp docker-compose.yml ubuntu@13.125.234.82:/home/ubuntu/app/docker-compose.yml
+     # Deploy on Server Docker-Compose
      - name: DockerHub image using
        run: |
          ssh ubuntu@13.125.234.82 << 'EOF'
-           docker stop last-app || true
-           docker rm last-app || true
-           docker pull "${{secrets.DOCKER_USERNAME}}"/last-app:latest
-           docker run -d --name last-app --env-file ~/app/.env -p 9090:9090 "${{secrets.DOCKER_USERNAME}}"/last-app:latest
+           cd /home/ubuntu/app
+           docker-compose pull
+           docker-compose down
+           docker-compose up -d
          EOF
